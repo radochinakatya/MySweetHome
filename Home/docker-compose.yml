@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+  Home:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: my-home-image
+    command: ./Home
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=test
+      - DB_USER=user
+      - DB_PASSWORD=123
+
+  db:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: "test_db"
+      POSTGRES_USER: "Home"
+      POSTGRES_PASSWORD: "123"
+    ports:
+      - "5436:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
